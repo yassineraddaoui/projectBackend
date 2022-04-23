@@ -4,18 +4,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.ColumnDefault;
+
+import com.example.demo.Generator;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,7 +46,14 @@ public class Candidat implements Serializable {
 	
   
 	@Column(name="cin")
-	@Id private String cin;
+	@Id 
+	private String cin;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(	name = "user_roles", 
+				joinColumns = @JoinColumn(name = "user_id"), 
+				inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
 	 
 	@OneToMany(mappedBy = "candidat")
@@ -73,10 +88,9 @@ public class Candidat implements Serializable {
 	private String lieuNaiss;
 	@Column(name="dateCin")
 	private Date dateCin;
-	@ColumnDefault(value = "0")
 	private int rangCin;
 	@ColumnDefault( "CURRENT_TIMESTAMP" )
-	@Column( name = "last_update", nullable = false )
+	@Column( name = "last_update")
 	private Date time;
 	@ColumnDefault(value = "0")
 	private int version;
@@ -100,6 +114,22 @@ public class Candidat implements Serializable {
 
 	private String delegation;
 	private String sexe;
+	public Candidat(Long id, String cin, String code, Date created_date, String delegation) {
+		super();
+		this.id = id;
+		this.cin = cin;
+		this.code = code;
+		this.created_date = created_date;
+		this.delegation = delegation;
+	}
+
+	public Candidat(String cin, String delegation, String encode) {
+		this.cin=cin;
+		this.delegation=delegation;
+		this.code=encode;
+		this.created_date = new Date();
+
+	}
 
 	
 

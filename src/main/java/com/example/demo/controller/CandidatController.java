@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ import com.example.demo.repository.NiveauSuperieurRepository;
 @CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
 @RestController
 @RequestMapping("/api/v1/")
-public class CandidatController {
+public class CandidatController  {
 	@Autowired
 	private CandidatRepository candidatRepository;
 	@Autowired 
@@ -52,6 +53,10 @@ public class CandidatController {
 	private NiveauSuperieurRepository niveauSupRepository;
 	@Autowired
 	private FormationRepository formationRepository;
+    @SuppressWarnings("unused")
+	private final static String USER_NOT_FOUND_MSG =
+            "user with CIN %s not found";
+
 	@GetMapping("/candidats")
 	  public ResponseEntity<List<Candidat>> getAllCandidats(@RequestParam(required = false) String cin) {
 	    try {
@@ -71,18 +76,23 @@ public class CandidatController {
 	  @PostMapping("/candidats")
 	  public ResponseEntity<Candidat> createCandidat(@RequestBody Candidat candidat) {
 	    try {
+	    	System.out.println(candidat);
 		    Optional<Candidat> cond = candidatRepository.findById(candidat.getCin());
 		    if (cond.isPresent()) {
 			      return new ResponseEntity<>(cond.get(), HttpStatus.INTERNAL_SERVER_ERROR);
 		    }
-		    candidat.setCreated_date(new Date()); 
 	      Candidat _condidat = candidatRepository
-	          .save(candidat);
+	          .save(new Candidat(null, candidat.getCin(),Generator.generateRandomPassword(6),new Date(), candidat.getDelegation())
+);
 	      return new ResponseEntity<>(_condidat, HttpStatus.CREATED);
 	    } catch (Exception e) {
 	      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	  }
+//	@PostMapping("/candidats")
+//	  public void createCandidat(@RequestBody Candidat candidat) {
+//		  candidatRepository.save(new Candidat(null, candidat.getCin(),Generator.generateRandomPassword(6),new Date(), candidat.getDelegation() ));
+//	  }
 	  @GetMapping("/candidat/{cin}")
 	  public ResponseEntity<Candidat> getTutorialById(@PathVariable("cin") String cin) {
 	    Optional<Candidat> cond = candidatRepository.findById(cin);
@@ -119,7 +129,6 @@ public class CandidatController {
 			_candidat.setPermis(c.getPermis());
 			_candidat.setSituation(c.getSituation());
 			_candidat.setParent(c.getParent());
-			_candidat.setCode(Generator.generateRandomPassword(6));
 			
 			if(c.getSituation().equals("Marié")) {
 	    	FamilleCouple familleCouple = c.getFamilleCouple();
@@ -166,5 +175,6 @@ public class CandidatController {
 	      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	  }
-
+	
+	
 }
