@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Condidature</title>
+<meta charset="UTF-8"/>
+<style>
+ 
+    
+	.header{
+        margin: 20px;
+        margin-bottom: 35px;
+        text-align: center;
+        font-size: 30px;
+	}
+	
+     table{
+	        font-size:20px;
+	        margin:10px;
+        }
+    
+   footer{
+   		font-size:20px;
+	    position: fixed;
+	    left: 0;
+	    bottom: 0;
+	    width: 100%;
+	    color: black;
+	    text-align: center;
+    }
+</style>
+</head>
+<body>
+	<div class="header">
+		<p> Formulaire de Candidature </p>
+	</div>
+	
+   
+
+
+	<div class="container">
+		<table>
+			<tr>
+				<th>CIN</th>
+				<td th:text="${candidat.cin}"></td>
+			</tr>
+			<tr>
+				<th>Nom</th>
+				<td th:text="${candidat.nom}"></td>
+			</tr>
+			<tr>
+				<th>Prenom</th>
+				<td th:text="${candidat.prenom}"></td>
+			</tr>
+			<tr>
+				<th>Date de naissance</th>
+				<td th:text="${DateNaiss}"></td>
+			</tr>
+			<tr>
+				<th>Date du premiere condidature</th>
+				<td th:text="${DateCreation}"></td>
+			</tr>
+			<tr>
+				<td> Spécialités :</td>
+			</tr>
+			<tr th:each="specialite : ${specialite}" >
+				 <td th:text="${specialite.cin_chomeur}"></td>
+             </tr>
+		</table>
+	</div>
+    <footer>
+    <p>La Compagnie des phosphates de Gafsa </p>
+    </footer>
+</body>
+</html>

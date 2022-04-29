@@ -1,11 +1,18 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.Generator;
 import com.example.demo.model.Candidat;
 import com.example.demo.model.FamilleChomage;
 import com.example.demo.model.FamilleCouple;
@@ -35,7 +41,10 @@ import com.example.demo.repository.FormationRepository;
 import com.example.demo.repository.HandicapRepository;
 import com.example.demo.repository.NiveauEtudeRepository;
 import com.example.demo.repository.NiveauSuperieurRepository;
-@CrossOrigin(origins= {"*"}, maxAge = 4800, allowCredentials = "false" )
+import com.example.demo.services.ExportPdfService;
+import com.example.demo.services.Generator;
+import com.lowagie.text.DocumentException;
+@CrossOrigin(origins= {"*"}, maxAge = 4800 )
 @RestController
 @RequestMapping("/api/v1/")
 public class CandidatController  {
@@ -53,26 +62,14 @@ public class CandidatController  {
 	private NiveauSuperieurRepository niveauSupRepository;
 	@Autowired
 	private FormationRepository formationRepository;
+    @Autowired
+    private ExportPdfService exportPdfService;
+
     @SuppressWarnings("unused")
 	private final static String USER_NOT_FOUND_MSG =
             "user with CIN %s not found";
 
-	@GetMapping("/candidats")
-	  public ResponseEntity<List<Candidat>> getAllCandidats(@RequestParam(required = false) String cin) {
-	    try {
-	      List<Candidat> candidats = new ArrayList<Candidat>();
-	      if (cin == null)
-	    	  candidatRepository.findAll().forEach(candidats::add);
-	      else
-	    	  candidatRepository.findAllByCin(cin).forEach(candidats::add);
-	      if (candidats.isEmpty()) {
-	        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	      }
-	      return new ResponseEntity<>(candidats, HttpStatus.OK);
-	    } catch (Exception e) {
-	      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-	  }
+	
 	  @PostMapping("/candidats")
 	  public ResponseEntity<Candidat> createCandidat(@RequestBody Candidat candidat) {
 	    try {
@@ -103,7 +100,7 @@ public class CandidatController  {
 	    }
 	  }
 	  @PutMapping("/candidat/{cin}")
-	  public ResponseEntity<Candidat> updateTutorial(@PathVariable("cin") String cin, @RequestBody Candidat c) {
+	  public ResponseEntity<String> updateTutorial(@PathVariable("cin") String cin, @RequestBody Candidat c) {
 
 	    Optional<Candidat> candidatx = candidatRepository.findById(cin);
 	    if (candidatx.isPresent()) {
@@ -160,10 +157,10 @@ public class CandidatController  {
 				fr.setCandidat(_candidat);
 				formationRepository.save(fr);
 			}
-		    
-	      return new ResponseEntity<>(candidatRepository.save(_candidat), HttpStatus.OK);
+		    candidatRepository.save(_candidat);
+	      return new ResponseEntity<>( HttpStatus.OK);
 	    } else {
-	      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	      return new ResponseEntity<String>("rsd",HttpStatus.BAD_REQUEST);
 	    }
 	  }
 	  @DeleteMapping("/candidats/{cin}")
@@ -176,5 +173,29 @@ public class CandidatController  {
 	    }
 	  }
 	
-	
+	  @GetMapping("/candidatpdf/{cin}")
+		public void exportcandidat(HttpSession session,@PathVariable String cin,
+		 HttpServletResponse response) throws DocumentException, IOException{
+	        Map<String, Object> data = createData(cin);
+	        ByteArrayInputStream exportedData = exportPdfService.exportReceiptPdf("Candidat", data);
+	        response.setContentType("application/octet-stream");
+	        response.setHeader("Content-Disposition", "attachment; filename=condidature.pdf");
+	        IOUtils.copy(exportedData, response.getOutputStream());
+			}
+
+		private Map<String, Object> createData(String cin) {
+			Optional<Candidat> candidat= candidatRepository.findByCin(cin);
+			if(candidat.isPresent()) {
+				Candidat c=candidat.get();
+			    Map<String, Object> data = new HashMap<>();
+			    data.put("candidat", candidat.get());
+			    String x= c.getDateNaiss().toString().substring(0, 10);
+			    data.put("DateNaiss",x);
+			    String y= c.getCreated_date().toString().substring(0, 10);
+			    data.put("DateCreation",y);
+			    data.put("specialite",c.getFc());
+			    return data;
+				}
+			return null;
+		}
 }

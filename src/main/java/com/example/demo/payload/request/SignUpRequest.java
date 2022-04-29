@@ -15,5 +15,6 @@ public class SignUpRequest {
 	 private String cin;
 	 private String code;
 	 private String delegation;
+	 private Set<String> role;
 
 }
