@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,7 @@ public class AdminController {
 
 	@Autowired 
 	CandidatRepository candidatRepository;
-	@GetMapping("/candidats")
+	@GetMapping("/moderator/candidats")
 	  public ResponseEntity<List<Candidat>> getAllCandidats(@RequestParam(required = false) String cin) {
 	    try {
 	      List<Candidat> candidats = new ArrayList<Candidat>();
@@ -59,7 +60,7 @@ public class AdminController {
 	    }
 	  }
 	
-	@GetMapping(value = "/exportcandidats")
+	@GetMapping(value = "/moderator/exportcandidats")
     public void exportToPDF(HttpServletResponse response) throws DocumentException, IOException {
         response.setContentType("application/pdf");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -100,5 +101,14 @@ public class AdminController {
 			}
 		return null;
 	}
+	@DeleteMapping("/delete/{cin}")
+	  public ResponseEntity<HttpStatus> deleteCandidat(@PathVariable("cin") String cin) {
+	    try {
+	    	candidatRepository.deleteById(cin);
+	      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	    } catch (Exception e) {
+	      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	  }
 }
 

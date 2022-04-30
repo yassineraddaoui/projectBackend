@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PfeApplication {
    
 	public static void main(String[] args) {
+		
 		SpringApplication.run(PfeApplication.class, args);
 	}
 

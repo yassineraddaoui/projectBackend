@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,7 +92,7 @@ public class CandidatController  {
 //		  candidatRepository.save(new Candidat(null, candidat.getCin(),Generator.generateRandomPassword(6),new Date(), candidat.getDelegation() ));
 //	  }
 	  @GetMapping("/candidat/{cin}")
-	  public ResponseEntity<Candidat> getTutorialById(@PathVariable("cin") String cin) {
+	  public ResponseEntity<Candidat> getCandidatByCin(@PathVariable("cin") String cin) {
 	    Optional<Candidat> cond = candidatRepository.findById(cin);
 	    if (cond.isPresent()) {
 	      return new ResponseEntity<>(cond.get(), HttpStatus.OK);
@@ -163,15 +164,7 @@ public class CandidatController  {
 	      return new ResponseEntity<String>("rsd",HttpStatus.BAD_REQUEST);
 	    }
 	  }
-	  @DeleteMapping("/candidats/{cin}")
-	  public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("cin") String cin) {
-	    try {
-	    	candidatRepository.deleteById(cin);
-	      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	    } catch (Exception e) {
-	      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-	  }
+	  
 	
 	  @GetMapping("/candidatpdf/{cin}")
 		public void exportcandidat(HttpSession session,@PathVariable String cin,
