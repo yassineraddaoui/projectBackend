@@ -47,17 +47,8 @@ public class Candidat implements Serializable {
 	@Id 
 	private String cin;
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(	name = "user_roles", 
-				joinColumns = @JoinColumn(name = "user_id"), 
-				inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<>();
 
-    
-    public void addRole(Role role) {
-        this.roles.add(role);
-    }
-    
+       
 	@OneToMany(mappedBy = "candidat")
 	private Collection<HandicapFamille> hf=new ArrayList<HandicapFamille>();
 	
@@ -65,7 +56,7 @@ public class Candidat implements Serializable {
 	private Collection<FamilleChomage> fc=new ArrayList<FamilleChomage>();
 	
 	@Column(name="code")
-	private String code;
+	private String password;
 	
 	private Parent parent;
 	
@@ -120,7 +111,7 @@ public class Candidat implements Serializable {
 		super();
 		this.id = id;
 		this.cin = cin;
-		this.code = code;
+		this.password = code;
 		this.created_date = created_date;
 		this.delegation = delegation;
 	}
@@ -128,7 +119,7 @@ public class Candidat implements Serializable {
 	public Candidat(String cin, String delegation, String encode) {
 		this.cin=cin;
 		this.delegation=delegation;
-		this.code=encode;
+		this.password=encode;
 		this.created_date = new Date();
 
 	}

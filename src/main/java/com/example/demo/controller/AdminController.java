@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,6 +45,9 @@ public class AdminController {
 
 	@Autowired 
 	CandidatRepository candidatRepository;
+	
+
+	  
 	@GetMapping("/moderator/candidats")
 	  public ResponseEntity<List<Candidat>> getAllCandidats(@RequestParam(required = false) String cin) {
 	    try {
