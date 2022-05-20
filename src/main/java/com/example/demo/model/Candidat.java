@@ -55,6 +55,9 @@ public class Candidat implements Serializable {
 	@OneToMany(mappedBy = "candidat")
 	private Collection<FamilleChomage> fc=new ArrayList<FamilleChomage>();
 	
+	@OneToMany(mappedBy = "candidat")
+	private Collection<CandidatSpecialite> cs=new ArrayList<CandidatSpecialite>();
+	
 	@Column(name="code")
 	private String password;
 	

@@ -1,13 +1,13 @@
 package com.example.demo.services;
 
 import java.awt.Color;
-
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.model.Candidat;
+import com.example.demo.model.CandidatSpecialite;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
@@ -32,14 +32,14 @@ public class AdminPDFExporter {
 		
 		Font font = FontFactory.getFont(FontFactory.HELVETICA);
 		font.setColor(Color.WHITE);
-		cell.setPhrase(new Phrase("User ID", font));
-		table.addCell(cell);
 		cell.setPhrase(new Phrase("CIN", font));
 		table.addCell(cell);
-		
-		cell.setPhrase(new Phrase("Full Name", font));
+		cell.setPhrase(new Phrase("Nom", font));
 		table.addCell(cell);
-		cell.setPhrase(new Phrase("Roles", font));
+		cell.setPhrase(new Phrase("Prenom", font));
+		table.addCell(cell);
+
+		cell.setPhrase(new Phrase("Delegation", font));
 		table.addCell(cell);
 		cell.setPhrase(new Phrase("Téléponé", font));
 		table.addCell(cell);
@@ -47,11 +47,11 @@ public class AdminPDFExporter {
 	private void writeTableData(PdfPTable table) {
 		for (Candidat user : listUsers) {
 		table.addCell(user.getCin());
-		table.addCell(user.getNom()+" "+user.getPrenom());
+		table.addCell(user.getNom());
+		table.addCell(user.getPrenom());
 		table.addCell(user.getDelegation());
 		table.addCell(user.getTel());
-		table.addCell(String.valueOf(user.getVersion()));
-
+		
 		}
 	}
 

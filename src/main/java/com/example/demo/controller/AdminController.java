@@ -1,18 +1,15 @@
 package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,8 +27,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.Admin;
 import com.example.demo.model.Candidat;
+import com.example.demo.model.CandidatSpecialite;
+import com.example.demo.model.Notification;
+import com.example.demo.repository.AdminRepository;
 import com.example.demo.repository.CandidatRepository;
+import com.example.demo.repository.NotificationRepository;
 import com.example.demo.services.AdminPDFExporter;
 import com.example.demo.services.ExportPdfService;
 import com.lowagie.text.DocumentException;
@@ -45,9 +47,30 @@ public class AdminController {
 
 	@Autowired 
 	CandidatRepository candidatRepository;
-	
+	@Autowired
+	NotificationRepository notificationRepository;
+	@Autowired
+	AdminRepository adminRepository;
+	 @DeleteMapping("/{mat}/{mat2}")
+	  public ResponseEntity<HttpStatus> deleteAdmin(@PathVariable("mat") String mat,@PathVariable("mat2") String mat2) {
+	    try {
+	      adminRepository.deleteByMatricule(mat);
+	      Notification n =new Notification(mat,new Date(),"Admin "+mat+" Was Deleted By Admin : "+mat2);
+	      notificationRepository.save(n);
+	      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	    } catch (Exception e) {
+	      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	  }
+		@GetMapping("/list")
+		public List<Admin> getAdmins(){
+			return adminRepository.findAll();		
+		}
 
-	  
+	@GetMapping("/notification")
+	public List<Notification> getNotifications(){
+		return notificationRepository.findAll();		
+	}
 	@GetMapping("/moderator/candidats")
 	  public ResponseEntity<List<Candidat>> getAllCandidats(@RequestParam(required = false) String cin) {
 	    try {
@@ -93,15 +116,22 @@ public class AdminController {
 
 	private Map<String, Object> createData(String cin) {
 		Optional<Candidat> candidat= candidatRepository.findByCin(cin);
+		String sp1="",sp2="";
 		if(candidat.isPresent()) {
 			Candidat c=candidat.get();
 		    Map<String, Object> data = new HashMap<>();
-		    data.put("candidat", candidat.get());
+		    data.put("candidat", c);
 		    String x= c.getDateNaiss().toString().substring(0, 10);
 		    data.put("DateNaiss",x);
 		    String y= c.getCreated_date().toString().substring(0, 10);
 		    data.put("DateCreation",y);
-		    data.put("specialite",c.getFc());
+		    for(CandidatSpecialite i:c.getCs()) {
+		    	if(sp1.isBlank()) {
+		    		sp1=i.specialite.getLib_specialite();
+		    	}
+		    	sp2=i.specialite.getLib_specialite();
+		    }
+		    data.put("sp",sp1+" , "+sp2);
 		    return data;
 			}
 		return null;

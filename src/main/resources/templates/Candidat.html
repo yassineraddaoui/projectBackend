@@ -5,27 +5,48 @@
 <meta charset="UTF-8"/>
 <style>
  
+    body{
     
+       text-align: center;
+    }
 	.header{
+		font-weight: bold;
+	
         margin: 20px;
         margin-bottom: 35px;
-        text-align: center;
         font-size: 30px;
+        color: #4287f5;
+        
 	}
 	
-     table{
-	        font-size:20px;
-	        margin:10px;
-        }
-    
+     table {
+    margin: 0 auto; /* or margin: 0 auto 0 auto */
+		line-height: 50px;
+		height: 50px;
+     
+        border-collapse: separate;
+        border-spacing: 0 15px;
+      }
+      th {
+        background-color: #4287f5;
+        color: white;
+      }
+      th,
+      td {
+        width: 300px;
+        text-align: center;
+        border: 1px solid black;
+        padding: 5px;
+      }
+     
    footer{
+   
    		font-size:20px;
 	    position: fixed;
 	    left: 0;
 	    bottom: 0;
 	    width: 100%;
 	    color: black;
-	    text-align: center;
     }
 </style>
 </head>
@@ -43,13 +64,20 @@
 				<th>CIN</th>
 				<td th:text="${candidat.cin}"></td>
 			</tr>
+			
 			<tr>
 				<th>Nom</th>
 				<td th:text="${candidat.nom}"></td>
 			</tr>
+			
 			<tr>
 				<th>Prenom</th>
 				<td th:text="${candidat.prenom}"></td>
+			</tr>
+			
+			<tr>
+				<th>Délégation</th>
+				<td th:text="${candidat.delegation}"></td>
 			</tr>
 			<tr>
 				<th>Date de naissance</th>
@@ -60,11 +88,9 @@
 				<td th:text="${DateCreation}"></td>
 			</tr>
 			<tr>
-				<td> Spécialités :</td>
+				<th>Spécialités </th>
+				<td th:text="${sp}"></td>
 			</tr>
-			<tr th:each="specialite : ${specialite}" >
-				 <td th:text="${specialite.cin_chomeur}"></td>
-             </tr>
 		</table>
 	</div>
     <footer>

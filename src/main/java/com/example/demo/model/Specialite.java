@@ -12,19 +12,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 @Entity
-@Table(name = "db_domaine_sp")
+@Table(name = "specialite")
 @Data
-public class Db_domaine_sp {
+public class Specialite {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private int delegation;
+	private Long id;
+	private String delegation;
 	private String CAP;
-
 	private String BTP;
+	private String BTS;
+
 	private String sexe;
-	private String lib_domaine;
 	private String lib_specialite;
+	private String permis;
 
 
 

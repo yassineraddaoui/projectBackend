@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +15,13 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Candidat;
@@ -35,6 +31,7 @@ import com.example.demo.model.Formation;
 import com.example.demo.model.HandicapFamille;
 import com.example.demo.model.NiveauEtude;
 import com.example.demo.model.NiveauSuperieur;
+import com.example.demo.model.Specialite;
 import com.example.demo.repository.CandidatRepository;
 import com.example.demo.repository.FamilleCoupleRepository;
 import com.example.demo.repository.FamilleRepository;
@@ -42,6 +39,7 @@ import com.example.demo.repository.FormationRepository;
 import com.example.demo.repository.HandicapRepository;
 import com.example.demo.repository.NiveauEtudeRepository;
 import com.example.demo.repository.NiveauSuperieurRepository;
+import com.example.demo.repository.SpécialitéRepository;
 import com.example.demo.services.ExportPdfService;
 import com.example.demo.services.Generator;
 import com.lowagie.text.DocumentException;
@@ -65,7 +63,8 @@ public class CandidatController  {
 	private FormationRepository formationRepository;
     @Autowired
     private ExportPdfService exportPdfService;
-
+    @Autowired
+    private SpécialitéRepository specialiteRepository;
     @SuppressWarnings("unused")
 	private final static String USER_NOT_FOUND_MSG =
             "user with CIN %s not found";
@@ -87,10 +86,6 @@ public class CandidatController  {
 	      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	  }
-//	@PostMapping("/candidats")
-//	  public void createCandidat(@RequestBody Candidat candidat) {
-//		  candidatRepository.save(new Candidat(null, candidat.getCin(),Generator.generateRandomPassword(6),new Date(), candidat.getDelegation() ));
-//	  }
 	  @GetMapping("/candidat/{cin}")
 	  public ResponseEntity<Candidat> getCandidatByCin(@PathVariable("cin") String cin) {
 	    Optional<Candidat> cond = candidatRepository.findById(cin);
@@ -101,7 +96,7 @@ public class CandidatController  {
 	    }
 	  }
 	  @PutMapping("/candidat/{cin}")
-	  public ResponseEntity<String> updateTutorial(@PathVariable("cin") String cin, @RequestBody Candidat c) {
+	  public ResponseEntity<String> updateCandidat(@PathVariable("cin") String cin, @RequestBody Candidat c) {
 
 	    Optional<Candidat> candidatx = candidatRepository.findById(cin);
 	    if (candidatx.isPresent()) {
@@ -165,7 +160,12 @@ public class CandidatController  {
 	    }
 	  }
 	  
-	
+	  @PostMapping("candidat/specialite/{permis}")
+	  public  List<Specialite> listSp(@PathVariable("permis") String permis) {
+		  System.out.println("--------------");
+		  return specialiteRepository.genererListSptst(permis);
+		  
+	  }
 	  @GetMapping("/candidatpdf/{cin}")
 		public void exportcandidat(HttpSession session,@PathVariable String cin,
 		 HttpServletResponse response) throws DocumentException, IOException{
