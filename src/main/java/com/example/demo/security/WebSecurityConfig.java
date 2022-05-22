@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.model.ERole;
 import com.example.demo.security.jwt.AuthEntryPointJwt;
 import com.example.demo.security.jwt.AuthTokenFilter;
 import com.example.demo.security.services.UserDetailsServiceImpl;
@@ -22,8 +23,8 @@ import com.example.demo.security.services.UserDetailsServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-    // securedEnabled = true,
-    // jsr250Enabled = true,
+     securedEnabled = true,
+     jsr250Enabled = true,
     prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
@@ -59,7 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
       .authorizeRequests().antMatchers("/admin/auth/**").permitAll()
-      .antMatchers("/api/test/**").permitAll()
+      .and()
+      .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
+      .and()
+      .authorizeRequests().antMatchers("/admin/moderator/**").hasAnyRole("ADMIN","MODERATOR")
       .anyRequest().authenticated();
 
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
