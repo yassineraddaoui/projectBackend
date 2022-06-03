@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Candidat;
+import com.example.demo.model.CandidatSpecialite;
 import com.example.demo.model.FamilleChomage;
 import com.example.demo.model.FamilleCouple;
 import com.example.demo.model.Formation;
@@ -33,6 +35,7 @@ import com.example.demo.model.NiveauEtude;
 import com.example.demo.model.NiveauSuperieur;
 import com.example.demo.model.Specialite;
 import com.example.demo.repository.CandidatRepository;
+import com.example.demo.repository.CandidatSpécialitéRepository;
 import com.example.demo.repository.FamilleCoupleRepository;
 import com.example.demo.repository.FamilleRepository;
 import com.example.demo.repository.FormationRepository;
@@ -65,6 +68,8 @@ public class CandidatController  {
     private ExportPdfService exportPdfService;
     @Autowired
     private SpécialitéRepository specialiteRepository;
+    @Autowired
+    private CandidatSpécialitéRepository candidatSpécialitéRepository;
     @SuppressWarnings("unused")
 	private final static String USER_NOT_FOUND_MSG =
             "user with CIN %s not found";
@@ -96,7 +101,7 @@ public class CandidatController  {
 	    }
 	  }
 	  @PutMapping("/candidat/{cin}")
-	  public ResponseEntity<String> updateCandidat(@PathVariable("cin") String cin, @RequestBody Candidat c) {
+	  public ResponseEntity<String> updateCandidat(@PathVariable("cin") String cin, @RequestBody Candidat c,@RequestBody List<String>list) {
 
 	    Optional<Candidat> candidatx = candidatRepository.findById(cin);
 	    if (candidatx.isPresent()) {
@@ -153,6 +158,14 @@ public class CandidatController  {
 				fr.setCandidat(_candidat);
 				formationRepository.save(fr);
 			}
+		    
+			  CandidatSpecialite cs= new CandidatSpecialite(
+					  specialiteRepository.lookForIdByLib(list.get(0)), 
+					  candidatRepository.findByCin(cin).get());
+			  candidatSpécialitéRepository.save(cs);
+
+		    
+		    
 		    candidatRepository.save(_candidat);
 	      return new ResponseEntity<>( HttpStatus.OK);
 	    } else {
@@ -160,11 +173,25 @@ public class CandidatController  {
 	    }
 	  }
 	  
-	  @PostMapping("candidat/specialite/{permis}")
-	  public  List<Specialite> listSp(@PathVariable("permis") String permis) {
-		  System.out.println("--------------");
-		  return specialiteRepository.genererListSptst(permis);
-		  
+	  
+	  @GetMapping("candidat/specialite/{cin}")
+	  public  List<String> getListSps(@PathVariable("cin") String cin) {		  
+		  return specialiteRepository.genererListSp(cin);
+	  }
+	  @PostMapping("candidat/specialite/{cin}")
+	  public  void addListSps(@PathVariable("cin") String cin,@RequestBody List<String>list) {		  
+		  try {
+			  candidatSpécialitéRepository.deleteAllById(cin);
+			  for (String i:list) {
+			  CandidatSpecialite cs= new CandidatSpecialite(
+					  specialiteRepository.lookForIdByLib(i), 
+					  candidatRepository.findByCin(cin).get());
+			  		candidatSpécialitéRepository.save(cs);
+			  }
+		  }
+		  catch (Exception e) {
+			// TODO: handle exception
+		}
 	  }
 	  @GetMapping("/candidatpdf/{cin}")
 		public void exportcandidat(HttpSession session,@PathVariable String cin,

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,12 +43,14 @@ import com.example.demo.model.CandidatSpecialite;
 import com.example.demo.model.ERole;
 import com.example.demo.model.Notification;
 import com.example.demo.model.Role;
+import com.example.demo.model.Specialite;
 import com.example.demo.payload.request.SignupRequest;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.repository.AdminRepository;
 import com.example.demo.repository.CandidatRepository;
 import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.RoleRepository;
+import com.example.demo.repository.SpécialitéRepository;
 import com.example.demo.services.AdminPDFExporter;
 import com.example.demo.services.ExportPdfService;
 import com.lowagie.text.DocumentException;
@@ -73,6 +78,9 @@ public class AdminController {
 	NotificationRepository notificationRepository;
 	@Autowired
 	AdminRepository adminRepository;
+	@Autowired
+	SpécialitéRepository specialiteRepository;
+
 	 @DeleteMapping("/{mat}")
 	  public ResponseEntity<HttpStatus> deleteAdmin(@PathVariable("mat") String mat) {
 	    try {
@@ -92,7 +100,70 @@ public class AdminController {
 		public List<Admin> getAdmins(){
 			return adminRepository.findAll();		
 		}
+		@GetMapping("/specialite")
+		public List<Specialite> getSp(){
+			return specialiteRepository.findAll();	
+		}
+		@PostMapping("/specialite/add")
+		public ResponseEntity<HttpStatus>  addSp(@RequestBody Specialite sp) {
+			
+			try {
+				specialiteRepository.save(sp);
+			      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+			    } catch (Exception e) {
+			      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
+			  }
+		@DeleteMapping("/specialite/delete/{id}")
+		public ResponseEntity<HttpStatus>  deleteSp(@PathVariable("id") Long id) {
+			
+				try {
+					specialiteRepository.deleteById(id);
+				
+			      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+				}
+			     catch (Exception e) {
+			      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
+			  }
+		@DeleteMapping("/notification")
+		public ResponseEntity<HttpStatus>  deleteNotif() {
+			
+				try {
+					notificationRepository.deleteAll();
+				
+			      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+				}
+			     catch (Exception e) {
+			      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
+			  }
 
+
+		
+		@PutMapping("/specialite/modifier/{id}")
+		public ResponseEntity<HttpStatus>  modifierSp(@PathVariable("id") Long id,@RequestBody Specialite sp) {
+			
+			try {
+				Optional<Specialite> s= specialiteRepository.findById(id);
+				if(s.isPresent()) {
+					Specialite sP=s.get();
+					sP.setBTP(sp.getBTP());
+					sP.setBTS(sp.getBTS());
+					sP.setCAP(sp.getCAP());
+					sP.setDelegation(sp.getDelegation());
+					sP.setLib_specialite(sp.getLib_specialite());
+					sP.setPermis(sp.getPermis());
+					sP.setSexe(sp.getSexe());
+					specialiteRepository.save(sP);
+				}
+			      return new ResponseEntity<>(HttpStatus.ACCEPTED);
+			    } catch (Exception e) {
+			      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			    }
+			  }
+
+		
 	@GetMapping("/notification")
 	public List<Notification> getNotifications(){
 		return notificationRepository.findAll();		
