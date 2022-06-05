@@ -1,45 +1,44 @@
-package com.example.demo.security.services;
+package com.example.demo.security.services.candidat;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.demo.model.Admin;
+import com.example.demo.model.Candidat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImplC implements UserDetails {
   private static final long serialVersionUID = 1L;
 
   private Long id;
 
 
-  private String matricule;
+  private String cin;
+  private String delegation;
 
   @JsonIgnore
   private String password;
 
   private Collection<? extends GrantedAuthority> authorities;
 
-  public UserDetailsImpl( String matricule, String password,
+  public UserDetailsImplC( String cin, String password,String delegation,
       Collection<? extends GrantedAuthority> authorities) {
-    this.matricule = matricule;
+    this.cin = cin;
     this.password = password;
     this.authorities = authorities;
+    this.delegation= delegation;
   }
 
-  public static UserDetailsImpl build(Admin user) {
-    List<GrantedAuthority> authorities = user.getRoles().stream()
-        .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-        .collect(Collectors.toList());
+  public static UserDetailsImplC build(Candidat user) {
+    List<GrantedAuthority> authorities = null;
 
-    return new UserDetailsImpl(
-        user.getMatricule(), 
-        user.getPassword(), 
+    return new UserDetailsImplC(
+        user.getCin(), 
+        user.getPassword(),
+        user.getDelegation(),
         authorities);
   }
 
@@ -53,8 +52,11 @@ public class UserDetailsImpl implements UserDetails {
     return password;
   }
 
-  public String getMatricule() {
-	    return matricule;
+  public String getcin() {
+	    return cin;
+	  }
+  public String getDelegation() {
+	    return delegation;
 	  }
 
 
@@ -84,13 +86,13 @@ public class UserDetailsImpl implements UserDetails {
       return true;
     if (o == null || getClass() != o.getClass())
       return false;
-    UserDetailsImpl user = (UserDetailsImpl) o;
+    UserDetailsImplC user = (UserDetailsImplC) o;
     return Objects.equals(id, user.id);
   }
 
 @Override
 public String getUsername() {
 	// TODO Auto-generated method stub
-	return matricule;
+	return cin;
 }
 }

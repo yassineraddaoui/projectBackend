@@ -1,4 +1,4 @@
-package com.example.demo.security.services;
+package com.example.demo.security.services.candidat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,20 +7,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.Admin;
-import com.example.demo.repository.AdminRepository;
+import com.example.demo.model.Candidat;
+import com.example.demo.repository.CandidatRepository;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImplC implements UserDetailsService {
   @Autowired
-  AdminRepository userRepository;
+  CandidatRepository userRepository;
+
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Admin user = userRepository.findByMatricule(username)
+    Candidat user = userRepository.findById(username)
         .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-    return UserDetailsImpl.build(user);
+    return UserDetailsImplC.build(user);
   }
 
 }

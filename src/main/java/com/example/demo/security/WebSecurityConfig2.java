@@ -16,9 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.demo.security.jwt.AuthEntryPointJwt;
-import com.example.demo.security.jwt.AuthTokenFilter;
-import com.example.demo.security.services.UserDetailsServiceImpl;
+import com.example.demo.security.jwt2.AuthEntryPointJwt2;
+import com.example.demo.security.jwt2.AuthTokenFilter2;
+import com.example.demo.security.services.candidat.UserDetailsServiceImplC;
 
 @Configuration
 @EnableWebSecurity
@@ -26,16 +26,16 @@ import com.example.demo.security.services.UserDetailsServiceImpl;
      securedEnabled = true,
      jsr250Enabled = true,
     prePostEnabled = true)
-@Order(0)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@Order(1)
+public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
   @Autowired
-  UserDetailsServiceImpl userDetailsService;
+  UserDetailsServiceImplC userDetailsService;
 
   @Autowired
-  private AuthEntryPointJwt unauthorizedHandler;
+  private AuthEntryPointJwt2 unauthorizedHandler;
   @Bean
-  public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter();
+  public AuthTokenFilter2 authenticationJwtTokenFilter2() {
+    return new AuthTokenFilter2();
   }
 
   @Override
@@ -60,14 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
       .authorizeRequests().antMatchers("/admin/auth/**").permitAll()
-      .and()
-      .authorizeRequests().antMatchers("/api/v1/**").permitAll()
-      .and()
-      .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
-      .and()
-      .authorizeRequests().antMatchers("/admin/moderator/**").hasAnyRole("ADMIN","MODERATOR")
       .anyRequest().authenticated();
 
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(authenticationJwtTokenFilter2(), UsernamePasswordAuthenticationFilter.class);
   }
 }

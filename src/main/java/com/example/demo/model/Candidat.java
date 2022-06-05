@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -119,6 +120,11 @@ public class Candidat implements Serializable {
 		this.password=encode;
 		this.created_date = new Date();
 
+	}
+
+	public Collection<? extends GrantedAuthority> getRoles() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
