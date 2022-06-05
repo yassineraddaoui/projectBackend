@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,6 @@ import com.example.demo.model.Formation;
 import com.example.demo.model.HandicapFamille;
 import com.example.demo.model.NiveauEtude;
 import com.example.demo.model.NiveauSuperieur;
-import com.example.demo.model.Specialite;
 import com.example.demo.repository.CandidatRepository;
 import com.example.demo.repository.CandidatSpécialitéRepository;
 import com.example.demo.repository.FamilleCoupleRepository;
