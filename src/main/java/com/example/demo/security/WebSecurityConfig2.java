@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.example.demo.security.jwt2.AuthEntryPointJwt2;
 import com.example.demo.security.jwt2.AuthTokenFilter2;
@@ -57,7 +58,9 @@ public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable()
+    http.cors().and()
+    .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+      .and()
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
       .authorizeRequests().antMatchers("/admin/auth/**").permitAll()
