@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -19,14 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.example.demo.security.jwt2.AuthEntryPointJwt2;
 import com.example.demo.security.jwt2.AuthTokenFilter2;
 import com.example.demo.security.services.candidat.UserDetailsServiceImplC;
-
+@Order(1)
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
      securedEnabled = true,
      jsr250Enabled = true,
     prePostEnabled = true)
-@Order(1)
+
 public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
   @Autowired
   UserDetailsServiceImplC userDetailsService;

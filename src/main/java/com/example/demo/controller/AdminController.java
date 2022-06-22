@@ -54,7 +54,7 @@ import com.example.demo.repository.SpécialitéRepository;
 import com.example.demo.services.AdminPDFExporter;
 import com.example.demo.services.ExportPdfService;
 import com.lowagie.text.DocumentException;
-@CrossOrigin(origins= {"*"}, maxAge = 4800 )
+@CrossOrigin(origins= {"http://localhost:4200"}, maxAge = 4800 )
 @RestController
 @RequestMapping("/admin")
 public class AdminController {

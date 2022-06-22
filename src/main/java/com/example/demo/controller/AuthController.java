@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Candidat;
-import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.request.copy.LoginRequest2;
 import com.example.demo.payload.request.copy.SignupRequest2;
-import com.example.demo.payload.response.JwtResponse;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.payload.response.copy.JwtResponse2;
 import com.example.demo.repository.CandidatRepository;
-import com.example.demo.repository.RoleRepository;
-import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.jwt2.JwtUtils2;
-import com.example.demo.security.services.UserDetailsImpl;
 import com.example.demo.security.services.candidat.UserDetailsImplC;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,37 +36,15 @@ public class AuthController {
 	 @Autowired
 	  AuthenticationManager authenticationManager;
 
-	  @Autowired
-	  RoleRepository roleRepository;
 
 	  @Autowired
 	  PasswordEncoder encoder;
 
-	  @Autowired
-	  JwtUtils jwtUtils;
 
 	  @Autowired
 	  JwtUtils2 jwtUtils2;
 
 
-	  @PostMapping("/signin")
-	  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-	    Authentication authentication = authenticationManager.authenticate(
-	        new UsernamePasswordAuthenticationToken(loginRequest.getMatricule(), loginRequest.getPassword()));
-
-	    SecurityContextHolder.getContext().setAuthentication(authentication);
-	    String jwt = jwtUtils.generateJwtToken(authentication);
-	    
-	    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
-	    List<String> roles = userDetails.getAuthorities().stream()
-	        .map(item -> item.getAuthority())
-	        .collect(Collectors.toList());
-
-	    return ResponseEntity.ok(new JwtResponse(jwt, 
-	                         userDetails.getMatricule(),
-	                         roles));
-	  }
 	  @PostMapping("/signin/candidat")
 	  public ResponseEntity<?> authenticateCandidat(@Valid @RequestBody LoginRequest2 loginRequest) {
 
